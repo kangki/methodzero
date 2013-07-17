@@ -99,4 +99,8 @@ amkr.ingWord = "";
 amkr.completeText = "";
 amkr.m_completeWord = "";
 
+amkr.clear = function() {
+	console.dir(this);
+};
+
 })(this);
