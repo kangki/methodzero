@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8"/>
+	<script type="text/javascript" src="/methodzero.js"></script>
+	<style>
+	.table {
+		display:block;
+		float:left;
+		margin:10px;
+	}
+	</style>
+</head>
+<body>
+	<h1>Multiplication table</h1>
+	<div id="view"></div>
+	<script type="text/javascript">
+
+	var logger = function(message) { console.log(message); };
+
+	var run = function(begin,end,count){
+		var mz$ = function(id) {
+			return document.getElementById(id);
+		};
+
+		var _genLineElement = function(id,sentence){
+			var view = mz$(id);
+			var old = view.innerHTML;
+			view.innerHTML = old + "<br/>" + sentence;
+		};
+
+		var _print = function(a,b,c,id) {
+			var sentence = a + " * " + b + " = " + c;
+			_genLineElement(id,sentence);
+			logger(sentence);
+		};
+
+		var _init = function(object,begin,count){
+			object.viewId = null;
+			object.x 			= begin-1;
+			object.y 			= count;
+		};
+
+		var _genPartElement = function(id, inner){
+			var view 			= mz$("view");
+			var div 			= document.createElement("div");
+  		div.id 				= id;
+  		div.className = "table";
+  		div.innerHTML = inner;
+			view.appendChild(div);
+		};
+
+		var _tic = function(object) {
+			object.viewId = "view" + object.x;
+			object.x 			= object.x + 1;
+			object.y 			= 0;
+
+			_genPartElement(object.viewId, object.x + "단<br/>");
+		};
+
+		var length = (end-begin+1)*count;
+		var i;
+		var properties = {x:0,y:0,viewId:""};
+
+		_init(properties, begin,count);
+
+		for(i=1; i<=length; i++) {
+			if(properties.y >= count) _tic(properties);
+
+			properties.y += 1;
+
+			_print(properties.x,properties.y,properties.x*properties.y,properties.viewId);
+		}
+
+	};
+
+
+	run(2,9,9);
+
+	</script>
+</body>
+</html>

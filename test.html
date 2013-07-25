@@ -1,0 +1,96 @@
+<html>
+<head>
+    <title></title>
+    <link href="http://www.codeproject.com/Styles/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+    <link href="Styles/Site.css" rel="stylesheet" type="text/css" />
+    <script src="http://www.codeproject.com/Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="http://www.codeproject.com/Scripts/jquery-ui-1.8.11.min.js" type="text/javascript"></script>
+    <script src="http://www.codeproject.com/Scripts/jquery.tmpl.js" type="text/javascript"></script>
+    <script src="http://www.codeproject.com/Scripts/knockout-1.2.0.js" type="text/javascript"></script>
+
+    <script>
+        var viewModel = {
+            Hotspots: ko.observableArray([
+             {
+                 X: ko.observable(527),
+                 Y: ko.observable(195),
+                 H: ko.observable(121),
+                 W: ko.observable(140)
+             },
+             {
+                 X: ko.observable(699),
+                 Y: ko.observable(193),
+                 H: ko.observable(294),
+                 W: ko.observable(269)
+             }
+         ])
+        };
+
+        viewModel.currentHotspot = ko.observable({ Text: null });
+
+        viewModel.addNew = function () {
+            viewModel.Hotspots.push({ X: ko.observable(50), Y: ko.observable(50),
+              H: ko.observable(100), W: ko.observable(100), Text: ko.observable('new hotspot') });
+        };
+
+        //
+
+        $(document).ready(function () {
+            $('#btnSave').click(function () {
+                $.ajax({
+                    url: '/Save.ashx',
+                    contentType: "application/json; charset=utf-8",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: ko.toJSON(viewModel),
+                    error: function () { alert("ajax error"); }
+                });
+            });
+
+            ko.bindingHandlers.jqDraggableResizable = {
+                init: function (element, valueAccessor, allBindingsAccessor, viewModel) {
+                    var obj = valueAccessor();
+                    var $elem = $(element);
+
+                    element.dataObj = obj;
+
+                    $elem.resizable({
+                        stop: function (event, ui) {
+                            this.dataObj.H(ui.size.height);
+                            this.dataObj.W(ui.size.width);
+                        }
+                    });
+
+                    $elem.draggable({
+                        stop: function (event, ui) {
+                            this.dataObj.X(ui.position.left);
+                            this.dataObj.Y(ui.position.top);
+                        }
+                    });
+                }
+            }
+
+            ko.applyBindings(viewModel);
+        });
+
+    </script>
+</head>
+<body>
+    <div class="main">
+        <div data-bind='template: "hotspotTemplate"'></div>
+
+        <input type='button' id='btnAdd' value="add new"
+          data-bind='click: function() { viewModel.addNew(); }' />
+        <input type='button' id='btnSave' value="save it!" />
+
+        <script id='hotspotTemplate' type='text/x-jquery-tmpl'>
+            {{each(i, h) Hotspots}}
+                <div class="resizable"
+                   style="position:absolute; left: ${ X }px; top: ${ Y }px; width: ${ W }px; height: ${ H }px;"
+                   data-bind="jqDraggableResizable : h">
+                </div>
+            {{/each}}
+        </script>
+    </div>
+</body>
+</html>
