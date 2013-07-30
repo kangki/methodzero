@@ -5,15 +5,12 @@
 //
 ;(function(){
 
-"use strict";
-var root 	= this;
-var mz 		= {};
-var _mz_ 	= _mz_ || {};
-
 // -------------------------------------------------
 //	private
 //	namespace : '_mz_'
 // -------------------------------------------------
+var _mz_ 	= _mz_ || {};
+
 _mz_.toString = function(o) {
 	return Object.prototype.toString.call(o);
 };
@@ -35,64 +32,87 @@ _mz_.document = function() {
 	return _mz_.doc = _mz_.doc || (window ? window.document : undefined);
 };
 
-mz.VERSION = "0.0.0.1";
+// -------------------------------------------------
 
-// log4js
-mz.log = {level:0,DEBUG:1,INFO:2,WARN:3,ERROR:4,FATAL:5};
-mz.log.level = function(level){};
+var root 	= this;
+var mz 		= {
+	VERSION : "0.0.0.1",
+};
+
+// logger
+mz.log = {
+	level:0,
+	DEBUG:1,
+	INFO:2,
+	WARN:3,
+	ERROR:4,
+	FATAL:5
+};
+
+mz.log.level = function(level) {
+
+};
+
 mz.log.debug = function(){
-	var arg = arguments;
+	var arg 	= arguments,
+		print 	= function(data) {
+		console.log(data);
+	};
+
 	console.groupCollapsed("[DEBUG]"+ _mz_.now(" MM월DD일 HH시MI분"));
-	mz.core.each(
-		arg,
-		function(c,i){
-			console.log(c);
-		}
-	);
+	mz.core.each(arg, print);
 	console.groupEnd();
 };
 
 // --------------------------------------------------
 //	core
 // --------------------------------------------------
-mz.core = {};
-mz.core.BREAK = {};
+mz.core = {
+	BREAK : {}
+};
 
 //
 mz.core.each = function(collection, filter, context) {
 	if(collection.length === collection.length+0) {
-		for(var i=0,l=collection.length; i<l; i++){
-			if (filter.call(context, collection[i], i, collection) === mz.core.BREAK) return;
+		for(var i=0,l=collection.length; i<l; i++) {
+			if (filter.call(context, collection[i], i, collection) === mz.core.BREAK)
+				return;
 		}
 	} else {
 		for(var key in collection) {
-			if (filter.call(context, collection[key], key, collection) === mz.core.BREAK) return;
+			if (filter.call(context, collection[key], key, collection) === mz.core.BREAK)
+				return;
 		}
 	}
 };
 
-// -------------------------------------------------
-//	util
-// -------------------------------------------------
-mz.util = {};
 //
-mz.util.typeof = function(o,t){
-	return _mz_.toString(o).indexOf(t) > 0;
+mz.core.typeof = function(object,target){
+	return _mz_.toString(object).indexOf(target) > 0;
 };
 
-//
 mz.core.each(
 	["Object","String","Number","Array","Boolean"],
 	function(data){
-		mz.util["is"+data] = function(t) {
-			return mz.util.typeof(t, data);
+		mz.core["is"+data] = function(target) {
+			return mz.core.typeof(target, data);
 		};
 	}
 );
 
+
+// - alias -----------------------------------------
+mz.core.each(mz.core, function(v,k){ mz[k] = v; }, mz);
+
+mz.debug 	= mz.log.debug;
+
+root.mz 	= mz;
+
+
 // -------------------------------------------------
 //	document
 // -------------------------------------------------
+
 mz.doc = {};
 
 //
@@ -107,11 +127,5 @@ mz.doc.get = function(s) {
 	return null;
 };
 
-// -------------------------------------------------
-//	alias
-// -------------------------------------------------
-mz.core.each(mz.core, function(v,k){ mz[k] = v; }, mz);
-
-root.mz = mz;
 
 }).call(this);
