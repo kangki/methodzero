@@ -1,14 +1,11 @@
-# kki-doc
+# 강환기
 
-> 강환기
->
-> 나의 코드 와 문서
 
-blog : http://codepedia.tistory.com/
-
-facebook : https://www.facebook.com/xangfi
-
-github : https://github.com/kangki
+| 구분 | 내용 |
+|----|----|
+| blog     | http://codepedia.tistory.com/   |
+| facebook | https://www.facebook.com/xangfi |
+| github   | https://github.com/kangki       |
 
 
 ## angularJs1.x
